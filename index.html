@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Web Project</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>My Interactive Webpage</h1>
+    <nav>
+      <ul class="navbar">
+        <li><a href="#">Home</a></li>
+        <li><a href="#form-section">Contact</a></li>
+        <li><a href="#todo-section">To-Do List</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="grid-container">
+    <section class="content">
+      <h2>Responsive Layout</h2>
+      <p>This section is styled using CSS Grid and adapts to screen size.</p>
+    </section>
+
+    <section class="content">
+      <h2>Why JavaScript?</h2>
+      <p>It powers interactivity and validation across your site!</p>
+    </section>
+  </main>
+
+  <section id="form-section" class="form-container">
+    <h2>Contact Us</h2>
+    <form id="contact-form">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
+      <textarea id="message" placeholder="Your Message" required></textarea>
+      <button type="submit">Submit</button>
+      <p id="form-error"></p>
+    </form>
+  </section>
+
+  <section id="todo-section" class="todo-container">
+    <h2>To-Do List</h2>
+    <input type="text" id="todo-input" placeholder="Enter a task..." />
+    <button onclick="addTask()">Add Task</button>
+    <ul id="todo-list"></ul>
+  </section>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
