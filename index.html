@@ -1,0 +1,314 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Web App</title>
+  <style>
+    :root {
+      --bg: #f9fafe;
+      --primary: #0066ff;
+      --secondary: #004cbf;
+      --accent: #00c9a7;
+      --text: #222;
+      --white: #fff;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--primary);
+      color: var(--white);
+      text-align: center;
+      padding: 1rem 2rem;
+      font-size: 1.8rem;
+      box-shadow: var(--shadow);
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: var(--secondary);
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-size: 1rem;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      padding: 2rem;
+    }
+
+    section {
+      display: none;
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.5s ease;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .quiz-box, .joke-box {
+      margin-top: 1rem;
+    }
+
+    .question {
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    .options {
+      list-style: none;
+      padding: 0;
+    }
+
+    .options li {
+      margin-bottom: 10px;
+    }
+
+    .options button {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      border: none;
+      color: var(--white);
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .options button:hover {
+      background: #009f89;
+    }
+
+    .result {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .action-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .action-btn:hover {
+      background: var(--secondary);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      body, main {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>🎯 Smart Web App - Quiz & Jokes</header>
+
+  <nav>
+    <button class="active" onclick="showTab('quiz', event)">📝 Quiz</button>
+    <button onclick="showTab('joke', event)">😂 Joke API</button>
+  </nav>
+
+  <main>
+    <!-- Quiz Section -->
+    <section id="quiz" class="active">
+      <h2>Interactive Quiz</h2>
+      <div class="quiz-box" id="quizBox">
+        <div class="question" id="questionText">Loading question...</div>
+        <ul class="options" id="optionsList"></ul>
+        <div class="result" id="quizResult"></div>
+        <button class="action-btn" onclick="nextQuestion()" id="nextBtn" style="display:none;">Next</button>
+      </div>
+    </section>
+
+    <!-- Joke Section -->
+    <section id="joke">
+      <h2>Get a Random Joke</h2>
+      <div class="joke-box">
+        <p id="jokeText">Click the button to get a joke! 😂</p>
+        <button class="action-btn" onclick="getJoke()">Get Joke</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Tab switcher
+    function showTab(tabId, event) {
+      document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // Quiz logic
+    const questions = [
+      {
+        question: "What does HTML stand for?",
+        options: ["HyperText Markup Language", "HighText Machine Language", "HyperTool Multi Language"],
+        answer: 0
+      },
+      {
+        question: "Which language is used for styling web pages?",
+        options: ["HTML", "CSS", "Python"],
+        answer: 1
+      },
+      {
+        question: "Which HTML tag is used to define an internal style sheet?",
+        options: ["<style>", "<script>", "<css>"],
+        answer: 0
+      },
+      {
+        question: "What is the capital of France?",
+        options: ["Paris", "London", "Berlin"],
+        answer: 0
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById("questionText").innerText = q.question;
+      const optionsList = document.getElementById("optionsList");
+      optionsList.innerHTML = "";
+      q.options.forEach((opt, idx) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(idx);
+        li.appendChild(btn);
+        optionsList.appendChild(li);
+      });
+      document.getElementById("quizResult").innerText = "";
+      document.getElementById("nextBtn").style.display = "none";
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentIndex].answer;
+      if (selected === correct) {
+        score++;
+        document.getElementById("quizResult").innerText = "✅ Correct!";
+      } else {
+        document.getElementById("quizResult").innerText = `❌ Wrong! Correct answer: ${questions[currentIndex].options[correct]}`;
+      }
+      document.querySelectorAll("#optionsList button").forEach(btn => btn.disabled = true);
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
+
+   function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < questions.length) {
+    loadQuestion();
+  } else {
+    // Show final score and restart button
+    const quizBox = document.querySelector(".quiz-box");
+    quizBox.innerHTML = `
+      <h3>🎉 Quiz Completed!</h3>
+      <p>Your Score: ${score} / ${questions.length}</p>
+      <button class="action-btn" id="restartBtn">Restart Quiz</button>
+    `;
+
+    // Add event listener to restart button
+    document.getElementById("restartBtn").addEventListener("click", restartQuiz);
+  }
+}
+
+    function showResult() {
+      document.getElementById("quizBox").innerHTML = `
+        <h3>🎉 Quiz Completed!</h3>
+        <p>Your Score: ${score} / ${questions.length}</p>
+        <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+      `;
+    }
+
+    function restartQuiz() {
+  currentIndex = 0;
+  score = 0;
+  
+  // Rebuild the quiz box HTML structure
+  const quizBox = document.querySelector(".quiz-box");
+  quizBox.innerHTML = `
+    <div class="question" id="questionText"></div>
+    <ul class="options" id="optionsList"></ul>
+    <div class="result" id="quizResult"></div>
+    <button class="action-btn" onclick="nextQuestion()" id="nextBtn" style="display:none;">Next</button>
+  `;
+
+  // Load the first question again
+  loadQuestion();
+}
+
+
+    loadQuestion();
+
+    // Joke API
+    function getJoke() {
+      const jokeText = document.getElementById("jokeText");
+      jokeText.innerText = "Loading joke...";
+      fetch("https://official-joke-api.appspot.com/random_joke")
+        .then(res => res.json())
+        .then(data => {
+          jokeText.innerText = `${data.setup}\n\n${data.punchline}`;
+        })
+        .catch(() => {
+          jokeText.innerText = "Failed to fetch joke. Try again!";
+        });
+    }
+  </script>
+</body>
+</html>
