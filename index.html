@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Portfolio & Apps</title>
+    <!-- Google Fonts: Inter for general text, Montserrat for headings -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Global Styles */
+        html {
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8fafc; /* Light background for overall page */
+        }
+
+        /* Headings with Montserrat Font */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d946ef; /* Purple */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7; /* Darker purple */
+        }
+
+        /* Section Headings */
+        .section-heading {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 6px;
+            background: linear-gradient(to right, #a855f7, #ec4899); /* Purple to Pink Gradient */
+            bottom: -10px;
+            left: 20%;
+            border-radius: 3px;
+        }
+
+        /* Primary Button Style */
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(to right, #a855f7, #ec4899); /* Purple to Pink Gradient */
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(to right, #ec4899, #a855f7); /* Reverse gradient on hover */
+        }
+
+        /* Secondary Button Style (for project cards) */
+        .btn-secondary {
+            display: inline-block;
+            background-color: #f3f4f6; /* Light gray */
+            color: #6d28d9; /* Deep purple */
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease-in-out;
+            border: 2px solid #a78bfa; /* Light purple border */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+            color: #8b5cf6; /* Brighter purple */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header & Navigation Specific Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .nav-links a {
+            position: relative;
+            padding-bottom: 5px; /* Space for underline */
+        }
+
+        /* Active Navigation Link Indicator (Desktop) */
+        .nav-links a.active {
+            color: #8b5cf6; /* Brighter purple for active link */
+            font-weight: 700;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            border-radius: 2px;
+        }
+
+        /* Mobile Navigation Toggle Animation */
+        .burger.toggle .line:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        .burger.toggle .line:nth-child(2) {
+            opacity: 0;
+        }
+        .burger.toggle .line:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Mobile Navigation Menu Slide-in/out */
+        .mobile-nav-links {
+            display: block; /* Always block for mobile */
+            position: absolute;
+            top: 100%; /* Position below header */
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-100%); /* Start off-screen */
+            transition: transform 0.4s ease-out; /* Smooth transition */
+            z-index: 990; /* Below sticky header */
+            overflow: hidden; /* Hide content when collapsed */
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .mobile-nav-active {
+            transform: translateY(0%); /* Slide in */
+        }
+
+        .mobile-nav-links li {
+            border-bottom: 1px solid #f3f4f6; /* Light separator */
+        }
+        .mobile-nav-links li:last-child {
+            border-bottom: none;
+        }
+
+        /* Active Navigation Link Indicator (Mobile) */
+        .mobile-nav-links a.active {
+            background-color: #f3f4f6; /* Light gray background */
+            color: #8b5cf6; /* Brighter purple */
+            font-weight: 700;
+        }
+
+        /* Portfolio Section Styles */
+        .hero {
+            background-size: cover;
+            background-position: center;
+        }
+
+        .animate-fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 1s forwards;
+        }
+
+        .animate-fade-in-up.delay-100 { animation-delay: 0.1s; }
+        .animate-fade-in-up.delay-200 { animation-delay: 0.2s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skill-card, .project-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eee;
+            overflow: hidden; /* For project card images */
+        }
+
+        .skill-card:hover, .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Product Listing Page specific styles for range input thumb */
+        #products-page input[type="range"]::-webkit-slider-thumb {
+            background: #d946ef; /* Purple */
+            box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.3);
+        }
+        #products-page input[type="range"]::-moz-range-thumb {
+            background: #d946ef;
+            box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section-heading {
+                font-size: 2.5rem;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 640px) { /* Adjust for smaller mobile screens */
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .btn-primary {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            .section-heading {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header & Navigation -->
+    <header>
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="logo">
+                <a href="#home" class="text-3xl font-extrabold text-purple-700 hover:text-purple-900 transition-colors duration-300" data-section="home">Madhura Meenakshi</a>
+            </div>
+            <ul id="desktop-nav-links" class="nav-links hidden md:flex space-x-8">
+                <li><a href="#home" class="text-lg font-semibold text-gray-600 hover:text-purple-700 transition-colors duration-300" data-section="home">Home</a></li>
+                <li><a href="#about" class="text-lg font-semibold text-gray-600 hover:text-purple-700 transition-colors duration-300" data-section="about">About</a></li>
+                <li><a href="#projects" class="text-lg font-semibold text-gray-600 hover:text-purple-700 transition-colors duration-300" data-section="projects">Projects</a></li>
+                <li><a href="#contact" class="text-lg font-semibold text-gray-600 hover:text-purple-700 transition-colors duration-300" data-section="contact">Contact</a></li>
+            </ul>
+            <div class="burger md:hidden cursor-pointer space-y-1.5">
+                <div class="line w-8 h-0.5 bg-gray-800 rounded-full transition-all duration-300"></div>
+                <div class="line w-8 h-0.5 bg-gray-800 rounded-full transition-all duration-300"></div>
+                <div class="line w-8 h-0.5 bg-gray-800 rounded-full transition-all duration-300"></div>
+            </div>
+        </nav>
+        <!-- Mobile Navigation Menu -->
+        <ul id="mobile-nav-links" class="mobile-nav-links md:hidden">
+            <li><a href="#home" class="block py-4 px-6 text-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 border-b border-gray-100" data-section="home">Home</a></li>
+            <li><a href="#about" class="block py-4 px-6 text-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 border-b border-gray-100" data-section="about">About</a></li>
+            <li><a href="#projects" class="block py-4 px-6 text-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 border-b border-gray-100" data-section="projects">Projects</a></li>
+            <li><a href="#contact" class="block py-4 px-6 text-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200" data-section="contact">Contact</a></li>
+        </ul>
+    </header>
+
+    <main id="app-container">
+        <!-- Home Section -->
+        <section id="home" class="hero min-h-screen flex items-center justify-center text-center bg-gradient-to-br from-purple-500 to-pink-500 text-white p-4">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 animate-fade-in-up">Hello, I'm <span class="text-yellow-200">Madhura Meenakshi</span></h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90 animate-fade-in-up delay-100">A passionate <span class="font-bold">Full-Stack Developer</span> with a knack for building engaging and functional web experiences.</p>
+                <a href="#projects" class="btn-primary animate-fade-in-up delay-200" data-section="projects">View My Work</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 bg-white p-4 flex"> <!-- Removed 'hidden' class -->
+            <div class="container mx-auto text-center">
+                <h2 class="section-heading">About Me</h2>
+                <div class="flex flex-col lg:flex-row items-center lg:space-x-12 mt-12 max-w-5xl mx-auto">
+                    <div class="lg:w-1/3 mb-8 lg:mb-0">
+                        <img src="https://placehold.co/300x300/a78bfa/ffffff?text=Your+Photo" alt="Your Photo" class="rounded-full w-64 h-64 object-cover mx-auto border-4 border-purple-400 shadow-xl">
+                    </div>
+                    <div class="lg:w-2/3 text-lg text-gray-700 leading-relaxed text-left">
+                        <p class="mb-4">
+                            Hi there! I'm <span class="font-semibold">Madhura Meenakshi</span>, a dedicated web developer fascinating in creating dynamic and responsive web applications. My journey into development began with a fascination for how digital interfaces could solve real-world problems and enhance user experiences.
+                        </p>
+                        <p class="mb-4">
+                            I specialize in front-end development with React, back-end with Node.js, and database management. I thrive on challenges and continuously seek to learn new technologies and best practices to deliver high-quality, scalable solutions.
+                        </p>
+                        <p>
+                            Outside of coding, I enjoy Playing Chess, reading Novels and exploring new things. I believe that a well-rounded life fuels creativity and problem-solving. I'm always eager to collaborate on exciting projects and contribute to innovative teams.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-16">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-8">My Skills</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                        <div class="skill-card">
+                            <h4 class="text-2xl font-semibold text-purple-600 mb-3">Front-end</h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li>HTML5, CSS3 (Tailwind CSS)</li>
+                                <li>JavaScript (ES6+)</li>
+                                <li>React / Angular</li>
+                                <li>Responsive & Adaptive Design</li>
+                            </ul>
+                        </div>
+                        <div class="skill-card">
+                            <h4 class="text-2xl font-semibold text-purple-600 mb-3">Back-end</h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li>Node.js / Python </li>
+                                <li>Express.js </li>
+                                <li>RESTful APIs</li>
+                                <li>Databases (SQL, NoSQL)</li>
+                            </ul>
+                        </div>
+                        <div class="skill-card">
+                            <h4 class="text-2xl font-semibold text-purple-600 mb-3">Tools & Others</h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li>Git & GitHub</li>
+                                <li>VS Code</li>
+                                <li>Adobe XD </li>
+                                <li>Agile Methodologies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 bg-gray-100 p-4 flex"> <!-- Removed 'hidden' class -->
+            <div class="container mx-auto text-center">
+                <h2 class="section-heading">My Projects</h2>
+                <p class="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Here are some of the projects I've built, demonstrating various skills and functionalities. Click to explore them!</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
+                    <!-- Project Card 1: To-Do List App -->
+                    <div class="project-card">
+                        <img src="https://placehold.co/600x400/e0e7ff/3b82f6?text=To-Do+App" alt="To-Do List App Thumbnail" class="w-full h-56 object-cover rounded-t-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">To-Do List Application</h3>
+                            <p class="text-gray-700 mb-4">A simple yet effective To-Do List application built with pure HTML, CSS, and JavaScript, featuring local storage persistence to save your tasks.</p>
+                            <button class="btn-secondary" data-section="todo-app">View Project</button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2: Fashion Product Listing Page -->
+                    <div class="project-card">
+                        <img src="https://placehold.co/600x400/fbcfe8/be185d?text=Fashion+Store" alt="Fashion Product Listing Thumbnail" class="w-full h-56 object-cover rounded-t-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">Fashion Product Listing</h3>
+                            <p class="text-gray-700 mb-4">An interactive product listing page for a fashion store, complete with dynamic filtering by category and price, and sorting options like rating.</p>
+                            <button class="btn-secondary" data-section="products-page">View Project</button>
+                        </div>
+                    </div>
+
+                    <!-- Add more project cards as needed -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-white p-4 flex"> <!-- Removed 'hidden' class -->
+            <div class="container mx-auto text-center">
+                <h2 class="section-heading">Get In Touch</h2>
+                <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">I'm always open to new opportunities, collaborations, or just a friendly chat. Feel free to reach out using the form below!</p>
+
+                <form action="YOUR_FORM_SUBMISSION_ENDPOINT" method="POST" class="max-w-xl mx-auto bg-gray-50 p-8 rounded-lg shadow-xl border border-gray-200">
+                    <div class="mb-6 text-left">
+                        <label for="contact-name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                        <input type="text" id="contact-name" name="name" placeholder="Your Name" required
+                               class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200">
+                    </div>
+                    <div class="mb-6 text-left">
+                        <label for="contact-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="contact-email" name="email" placeholder="your.email@example.com" required
+                               class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200">
+                    </div>
+                    <div class="mb-6 text-left">
+                        <label for="contact-message" class="block text-gray-700 text-sm font-bold mb-2">Message</label>
+                        <textarea id="contact-message" name="message" rows="6" placeholder="Your message here..." required
+                                  class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 resize-y"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Send Message</button>
+                    <!-- <p class="text-xs text-gray-500 mt-4">Note: This form requires a backend service (e.g., Formspree, Netlify Forms) to send emails.</p> -->
+                </form>
+
+                <div class="social-links mt-12 flex justify-center space-x-6">
+                    <a href="https://www.linkedin.com/in/madhurameenakshi/" target="_blank" class="text-gray-600 hover:text-purple-700 transition-colors duration-300">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16.338 16.338H13.67V12.93c0-.83-.015-1.898-1.158-1.898-1.16 0-1.336.906-1.336 1.84v3.506H8.847V8.91h2.646v1.21h.037c.368-.698 1.267-1.42 2.61-1.42 2.793 0 3.313 1.83 3.313 4.207v4.431zM6.168 7.653c-1.008 0-1.823-.815-1.823-1.823s.815-1.823 1.823-1.823 1.823.815 1.823 1.823-.815 1.823-1.823 1.823zM7.5 21H4.5V8.91h3V21zM21 0H3C1.346 0 0 1.346 0 3v18c0 1.654 1.346 3 3 3h18c1.654 0 3-1.346 3-3V3c0-1.654-1.346-3-3-3z"/>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/Madhura-Meenakshi" target="_blank" class="text-gray-600 hover:text-purple-700 transition-colors duration-300">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.865 8.165 6.839 9.48.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.007.07 1.532 1.03 1.532 1.03.89 1.529 2.342 1.088 2.91.832.092-.646.355-1.088.649-1.336-2.22-.253-4.555-1.11-4.555-4.947 0-1.09.39-1.984 1.03-2.68-.103-.253-.446-1.27.098-2.65 0 0 .84-.27 2.75 1.025.798-.222 1.649-.333 2.5-.333.85 0 1.702.111 2.5.333 1.909-1.295 2.747-1.025 2.747-1.025.546 1.38.202 2.398.099 2.65.64.696 1.026 1.594 1.026 2.68 0 3.846-2.339 4.69-4.566 4.943.359.309.678.92.678 1.855 0 1.336-.012 2.419-.012 2.747 0 .268.18.579.688.481C21.137 20.163 24 16.418 24 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/>
+                        </svg>
+                    </a>
+                    <!-- Add more social links here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- To-Do List Application Section -->
+        <section id="todo-app" class="min-h-screen flex items-center justify-center p-4 bg-gray-100 hidden">
+            <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border border-gray-200">
+                <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-6">My To-Do List</h2>
+
+                <!-- Input and Add Button Section -->
+                <div class="flex items-center space-x-3 mb-6">
+                    <input
+                        type="text"
+                        id="todo-input"
+                        placeholder="Add a new task..."
+                        class="flex-grow p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 ease-in-out"
+                    >
+                    <button
+                        id="add-todo-btn"
+                        class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-5 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        Add Task
+                    </button>
+                </div>
+
+                <!-- To-Do List Container -->
+                <ul id="todo-list" class="space-y-3">
+                    <!-- To-Do items will be dynamically added here -->
+                </ul>
+
+                <!-- Clear All Button -->
+                <div class="mt-6 text-center">
+                    <button
+                        id="clear-all-btn"
+                        class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        Clear All Tasks
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Listing Page Section -->
+        <section id="products-page" class="min-h-screen flex flex-col p-4 bg-gray-50 hidden">
+            <!-- Header Section (repurposed for internal app title) -->
+            <header class="bg-gradient-to-r from-pink-500 to-purple-600 text-white p-6 shadow-lg rounded-b-lg mb-8">
+                <div class="container mx-auto flex justify-between items-center">
+                    <h2 class="text-3xl font-extrabold tracking-tight">Fashion Finds</h2>
+                    <nav>
+                        <ul class="flex space-x-6">
+                            <li><a href="#projects" class="hover:text-pink-200 transition duration-300" data-section="projects">Back to Portfolio</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <div class="container mx-auto flex flex-col lg:flex-row gap-8 flex-grow">
+
+                <!-- Sidebar for Filtering and Sorting -->
+                <aside class="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit sticky top-8 border border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">Filters & Sort</h3>
+
+                    <!-- Category Filter -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-4">Categories</h4>
+                        <div id="category-filters" class="space-y-2">
+                            <!-- Checkboxes will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-gray-700 mb-4">Price Range</h4>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="min-price-display" class="text-gray-600 font-medium">₹0</span>
+                            <span id="max-price-display" class="text-gray-600 font-medium">₹5000</span>
+                        </div>
+                        <input type="range" id="price-range" min="0" max="5000" value="5000" step="100"
+                               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <!-- Sort By -->
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-700 mb-4">Sort By</h4>
+                        <select id="sort-by"
+                                class="w-full p-3 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 transition duration-200 ease-in-out">
+                            <option value="default">Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating-desc">Rating: High to Low</option>
+                            <option value="rating-asc">Rating: Low to High</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <!-- Product Listing Grid -->
+                <section class="w-full lg:w-3/4">
+                    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Product cards will be inserted here by JavaScript -->
+                    </div>
+                    <!-- Message for no products found -->
+                    <div id="no-products-message" class="hidden text-center text-gray-600 text-lg mt-8 p-4 bg-yellow-50 rounded-lg shadow-sm">
+                        No products match your current filters. Try adjusting your selections!
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 text-center rounded-t-lg">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Your Name. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Global App State & Navigation ---
+            const appContainer = document.getElementById('app-container');
+            const allSections = appContainer.querySelectorAll('section'); // Get all sections within main
+            const desktopNavLinks = document.querySelectorAll('#desktop-nav-links a[data-section]');
+            const mobileNavLinksContainer = document.getElementById('mobile-nav-links');
+            const mobileNavLinks = mobileNavLinksContainer.querySelectorAll('a[data-section]');
+            const burger = document.querySelector('.burger');
+
+            let currentSectionId = 'home'; // Default starting section
+
+            /**
+             * Shows a specific section and hides all others.
+             * Also updates the active navigation link.
+             * @param {string} sectionId - The ID of the section to show.
+             * @param {boolean} isAppSection - True if the section is one of the applications.
+             */
+            const showSection = (sectionId, isAppSection = false) => {
+                const portfolioSections = ['home', 'about', 'projects', 'contact'];
+                const appSections = ['todo-app', 'products-page'];
+
+                if (isAppSection) {
+                    // Entering app mode: Hide all portfolio sections, show only the active app
+                    portfolioSections.forEach(id => {
+                        const section = document.getElementById(id);
+                        if (section) section.classList.add('hidden');
+                    });
+                    appSections.forEach(id => {
+                        const section = document.getElementById(id);
+                        if (section) {
+                            if (id === sectionId) {
+                                section.classList.remove('hidden');
+                                section.classList.add('flex');
+                                // Initialize app logic
+                                if (id === 'todo-app') initTodoApp();
+                                if (id === 'products-page') initProductListingApp();
+                            } else {
+                                section.classList.add('hidden');
+                                section.classList.remove('flex');
+                            }
+                        }
+                    });
+                } else {
+                    // Entering portfolio mode: Show all portfolio sections, hide all app sections
+                    appSections.forEach(id => {
+                        const section = document.getElementById(id);
+                        if (section) section.classList.add('hidden');
+                    });
+                    portfolioSections.forEach(id => {
+                        const section = document.getElementById(id);
+                        if (section) {
+                            section.classList.remove('hidden');
+                            // Ensure flex for layout if needed, though for portfolio sections, block might be more common
+                            // For sections like 'home' which are centered, 'flex' is appropriate.
+                            // For 'about', 'projects', 'contact' which are block-level, 'block' might be better.
+                            // Let's stick to 'flex' for consistency with the current template.
+                            section.classList.add('flex');
+                        }
+                    });
+                    // Scroll to the specific portfolio section
+                    const targetElement = document.getElementById(sectionId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+                currentSectionId = sectionId;
+                updateActiveNavLinks(sectionId);
+            };
+
+            /**
+             * Updates the 'active' class on navigation links based on the current section.
+             * @param {string} activeSectionId - The ID of the currently active section.
+             */
+            const updateActiveNavLinks = (activeSectionId) => {
+                // Desktop Nav Links
+                desktopNavLinks.forEach(link => {
+                    if (link.dataset.section === activeSectionId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+
+                // Mobile Nav Links
+                mobileNavLinks.forEach(link => {
+                    if (link.dataset.section === activeSectionId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            };
+
+            // Initial section display based on URL hash or default
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash) {
+                const isAppHash = ['todo-app', 'products-page'].includes(initialHash);
+                showSection(initialHash, isAppHash);
+            } else {
+                showSection('home', false); // Default to home in portfolio mode
+            }
+
+            // --- Navigation Event Listeners ---
+            // Combine desktop and mobile nav links for click handling
+            document.querySelectorAll('nav a[data-section], .btn-primary[data-section], .btn-secondary[data-section]').forEach(link => {
+                link.addEventListener('click', (event) => {
+                    const targetSectionId = link.dataset.section;
+                    const isAppSection = ['todo-app', 'products-page'].includes(targetSectionId);
+
+                    if (isAppSection) {
+                        event.preventDefault(); // Prevent default anchor behavior for apps
+                        showSection(targetSectionId, true);
+                        history.pushState(null, '', `#${targetSectionId}`); // Update URL hash
+                    } else {
+                        // For portfolio sections, let default anchor behavior handle scrolling
+                        // The IntersectionObserver will handle active link highlighting
+                        // No preventDefault here, so the browser scrolls
+                        showSection(targetSectionId, false); // Just manage visibility of apps
+                        history.pushState(null, '', `#${targetSectionId}`); // Update URL hash
+                    }
+                });
+            });
+
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', (event) => {
+                const hash = window.location.hash.substring(1);
+                const isAppHash = ['todo-app', 'products-page'].includes(hash);
+                if (hash && document.getElementById(hash)) {
+                    showSection(hash, isAppHash);
+                } else {
+                    showSection('home', false); // Fallback to home in portfolio mode
+                }
+            });
+
+            // --- Mobile Navigation Toggle ---
+            burger.addEventListener('click', () => {
+                mobileNavLinksContainer.classList.toggle('mobile-nav-active');
+                burger.classList.toggle('toggle');
+            });
+
+            // --- Scroll Spy Logic (for desktop navigation) ---
+            // Only observe main portfolio sections for scroll spy
+            const sectionsToObserve = document.querySelectorAll('#home, #about, #projects, #contact');
+            const observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px 0px -50% 0px', // Trigger when section is 50% in view
+                threshold: 0.1 // Adjust threshold for better detection
+            };
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Only update if we are currently in portfolio mode
+                        // Check if any app section is currently visible
+                        const isAnyAppSectionVisible = ['todo-app', 'products-page'].some(id => {
+                            const section = document.getElementById(id);
+                            return section && !section.classList.contains('hidden');
+                        });
+
+                        if (!isAnyAppSectionVisible) {
+                            updateActiveNavLinks(entry.target.id);
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sectionsToObserve.forEach(section => {
+                sectionObserver.observe(section);
+            });
+
+
+            // --- To-Do List App Logic ---
+            let todos = []; // Global for To-Do app
+
+            const initTodoApp = () => {
+                const todoInput = document.getElementById('todo-input');
+                const addTodoBtn = document.getElementById('add-todo-btn');
+                const todoList = document.getElementById('todo-list');
+                const clearAllBtn = document.getElementById('clear-all-btn');
+
+                // Ensure listeners are only added once per element
+                // Use named functions for removeEventListener to work correctly
+                if (!todoInput._hasListeners) {
+                    addTodoBtn.addEventListener('click', addTodoHandler);
+                    todoInput.addEventListener('keypress', addTodoKeyHandler);
+                    clearAllBtn.addEventListener('click', clearAllTodosHandler);
+                    todoInput._hasListeners = true; // Mark as having listeners
+                }
+
+                loadTodos(); // Load todos when app is initialized
+            };
+
+            const loadTodos = () => {
+                try {
+                    const storedTodos = localStorage.getItem('todos');
+                    if (storedTodos) {
+                        todos = JSON.parse(storedTodos);
+                        document.getElementById('todo-list').innerHTML = ''; // Clear existing list items
+                        todos.forEach(todo => renderTodoItem(todo));
+                    }
+                } catch (error) {
+                    console.error('Error loading todos from localStorage:', error);
+                    displayStatusMessage('todo-app', 'Could not load your tasks. Local storage might be corrupted.', 'text-red-500');
+                }
+            };
+
+            const saveTodos = () => {
+                try {
+                    localStorage.setItem('todos', JSON.stringify(todos));
+                } catch (error) {
+                    console.error('Error saving todos to localStorage:', error);
+                    displayStatusMessage('todo-app', 'Could not save your tasks. Local storage might be full.', 'text-red-500');
+                }
+            };
+
+            const renderTodoItem = (todo) => {
+                const listItem = document.createElement('li');
+                listItem.id = `todo-item-${todo.id}`;
+                listItem.className = `flex items-center justify-between p-4 bg-gray-50 rounded-md shadow-sm transition duration-300 ease-in-out ${todo.completed ? 'opacity-70 line-through text-gray-500' : 'hover:bg-gray-100'}`;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+                checkbox.className = 'form-checkbox h-5 w-5 text-purple-600 rounded focus:ring-purple-500 cursor-pointer';
+                checkbox.addEventListener('change', () => toggleTodoCompletion(todo.id));
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = todo.text;
+                textSpan.className = 'flex-grow ml-3 text-gray-800 cursor-pointer';
+                textSpan.addEventListener('click', () => editTodoText(todo.id, textSpan));
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'ml-4 bg-red-400 hover:bg-red-500 text-white text-sm font-medium py-1 px-3 rounded-md transition duration-200 ease-in-out';
+                deleteButton.addEventListener('click', () => deleteTodo(todo.id));
+
+                document.getElementById('todo-list').appendChild(listItem);
+                listItem.appendChild(checkbox);
+                listItem.appendChild(textSpan);
+                listItem.appendChild(deleteButton);
+            };
+
+            const addTodoHandler = () => {
+                const todoInput = document.getElementById('todo-input');
+                const todoText = todoInput.value.trim();
+                if (todoText === '') {
+                    displayStatusMessage('todo-app', 'Please enter a task!', 'text-red-500');
+                    return;
+                }
+
+                const newTodo = {
+                    id: Date.now().toString(),
+                    text: todoText,
+                    completed: false
+                };
+
+                todos.push(newTodo);
+                renderTodoItem(newTodo);
+                saveTodos();
+                todoInput.value = '';
+            };
+
+            const addTodoKeyHandler = (e) => {
+                if (e.key === 'Enter') {
+                    addTodoHandler();
+                }
+            };
+
+            const toggleTodoCompletion = (id) => {
+                const todoIndex = todos.findIndex(todo => todo.id === id);
+                if (todoIndex > -1) {
+                    todos[todoIndex].completed = !todos[todoIndex].completed;
+                    saveTodos();
+                    const listItem = document.getElementById(`todo-item-${id}`);
+                    if (listItem) {
+                        if (todos[todoIndex].completed) {
+                            listItem.classList.add('opacity-70', 'line-through', 'text-gray-500');
+                            listItem.classList.remove('hover:bg-gray-100');
+                        } else {
+                            listItem.classList.remove('opacity-70', 'line-through', 'text-gray-500');
+                            listItem.classList.add('hover:bg-gray-100');
+                        }
+                    }
+                }
+            };
+
+            const deleteTodo = (id) => {
+                showConfirmationModal('Are you sure you want to delete this task?', (confirmed) => {
+                    if (confirmed) {
+                        todos = todos.filter(todo => todo.id !== id);
+                        saveTodos();
+                        const listItem = document.getElementById(`todo-item-${id}`);
+                        if (listItem) {
+                            listItem.remove();
+                        }
+                    }
+                });
+            };
+
+            const editTodoText = (id, textSpan) => {
+                const originalText = textSpan.textContent;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = originalText;
+                input.className = 'flex-grow p-1 border border-purple-400 rounded-sm focus:ring-1 focus:ring-purple-500';
+
+                textSpan.parentNode.replaceChild(input, textSpan);
+                input.focus();
+
+                const saveEdit = () => {
+                    const newText = input.value.trim();
+                    if (newText === '') {
+                        input.parentNode.replaceChild(textSpan, input);
+                        textSpan.textContent = originalText;
+                        return;
+                    }
+
+                    const todoIndex = todos.findIndex(todo => todo.id === id);
+                    if (todoIndex > -1) {
+                        todos[todoIndex].text = newText;
+                        saveTodos();
+                        textSpan.textContent = newText;
+                        input.parentNode.replaceChild(textSpan, input);
+                    }
+                };
+
+                input.addEventListener('blur', saveEdit);
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        input.blur();
+                    }
+                });
+            };
+
+            const clearAllTodosHandler = () => {
+                if (todos.length === 0) {
+                    displayStatusMessage('todo-app', 'No tasks to clear!', 'text-gray-500');
+                    return;
+                }
+                showConfirmationModal('Are you sure you want to clear all tasks?', (confirmed) => {
+                    if (confirmed) {
+                        todos = [];
+                        saveTodos();
+                        document.getElementById('todo-list').innerHTML = '';
+                    }
+                });
+            };
+
+
+            // --- Product Listing App Logic ---
+            let allProducts = []; // Global for Product Listing app
+            let selectedCategories = new Set();
+            let maxPrice = 5000; // Initial max price for products
+            let currentSort = 'default';
+
+            const initProductListingApp = () => {
+                // Define products here or fetch from an API
+                allProducts = [
+                    { id: 1, name: 'Elegant Maxi Dress', category: 'Dresses', price: 2999, rating: 4.7, imageUrl: 'https://images.unsplash.com/photo-1583002633008-251c5e13554b?w=400&h=300&fit=crop&auto=format' },
+                    { id: 2, name: 'Classic Leather Handbag', category: 'Accessories', price: 3499, rating: 4.8, imageUrl: 'https://images.unsplash.com/photo-1594916896172-132d7335e985?w=400&h=300&fit=crop&auto=format' },
+                    { id: 3, name: 'Men\'s Casual Sneakers', category: 'Footwear', price: 1899, rating: 4.5, imageUrl: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d52?w=400&h=300&fit=crop&auto=format' },
+                    { id: 4, name: 'Summer Floral Blouse', category: 'Tops', price: 999, rating: 4.2, imageUrl: 'https://images.unsplash.com/photo-1572804013427-4d75bce71a06?w=400&h=300&fit=crop&auto=format' },
+                    { id: 5, name: 'Denim Jeans (Slim Fit)', category: 'Bottoms', price: 1750, rating: 4.6, imageUrl: 'https://images.unsplash.com/photo-1541099877383-70337f71b96e?w=400&h=300&fit=crop&auto=format' },
+                    { id: 6, name: 'Wool Blend Coat', category: 'Outerwear', price: 4500, rating: 4.9, imageUrl: 'https://images.unsplash.com/photo-1515886657613-fa0f738c858c?w=400&h=300&fit=crop&auto=format' },
+                    { id: 7, name: 'Statement Necklace', category: 'Jewelry', price: 1200, rating: 4.3, imageUrl: 'https://images.unsplash.com/photo-1621251913749-346743916962?w=400&h=300&fit=crop&auto=format' },
+                    { id: 8, name: 'High-Waisted Skirt', category: 'Bottoms', price: 1450, rating: 4.0, imageUrl: 'https://images.unsplash.com/photo-1594633313076-13d81b373412?w=400&h=300&fit=crop&auto=format' },
+                    { id: 9, name: 'Sporty Running Shoes', category: 'Footwear', price: 2500, rating: 4.7, imageUrl: 'https://images.unsplash.com/photo-1552066316-2486790901e9?w=400&h=300&fit=crop&auto=format' },
+                    { id: 10, name: 'Silk Scarf', category: 'Accessories', price: 800, rating: 4.1, imageUrl: 'https://images.unsplash.com/photo-1577785210986-778216170669?w=400&h=300&fit=crop&auto=format' },
+                    { id: 11, name: 'Tailored Blazer', category: 'Outerwear', price: 3800, rating: 4.8, imageUrl: 'https://images.unsplash.com/photo-1596702758226-f772719a933f?w=400&h=300&fit=crop&auto=format' },
+                    { id: 12, name: 'Cocktail Dress', category: 'Dresses', price: 3100, rating: 4.5, imageUrl: 'https://images.unsplash.com/photo-1594633313076-13d81b373412?w=400&h=300&fit=crop&auto=format' },
+                    { id: 13, name: 'Ankle Boots', category: 'Footwear', price: 2700, rating: 4.4, imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539cce7dd?w=400&h=300&fit=crop&auto=format' },
+                    { id: 14, name: 'Graphic Tee', category: 'Tops', price: 650, rating: 4.0, imageUrl: 'https://images.unsplash.com/photo-1576566588028-cdfd587872e0?w=400&h=300&fit=crop&auto=format' },
+                    { id: 15, name: 'Crossbody Bag', category: 'Accessories', price: 1900, rating: 4.6, imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df748808?w=400&h=300&fit=crop&auto=format' },
+                ];
+
+                const categoryFiltersContainer = document.getElementById('category-filters');
+                const priceRangeInput = document.getElementById('price-range');
+                const minPriceDisplay = document.getElementById('min-price-display');
+                const maxPriceDisplay = document.getElementById('max-price-display');
+                const sortBySelect = document.getElementById('sort-by');
+
+                // Set initial values for filters and sort
+                maxPrice = parseFloat(priceRangeInput.value);
+                currentSort = sortBySelect.value;
+                selectedCategories = new Set(); // Reset categories on re-init
+
+                // Ensure listeners are only added once per element
+                if (!priceRangeInput._hasListeners) {
+                    priceRangeInput.addEventListener('input', priceRangeInputHandler);
+                    sortBySelect.addEventListener('change', sortBySelectHandler);
+                    priceRangeInput._hasListeners = true;
+                }
+
+                renderCategoryFilters(); // Populate category checkboxes
+                minPriceDisplay.textContent = `₹${priceRangeInput.min}`;
+                maxPriceDisplay.textContent = `₹${priceRangeInput.value}`;
+                updateProductDisplay(); // Initial render of all products
+            };
+
+            const getUniqueCategories = () => {
+                const categories = allProducts.map(product => product.category);
+                return [...new Set(categories)].sort();
+            };
+
+            const renderCategoryFilters = () => {
+                const categoryFiltersContainer = document.getElementById('category-filters');
+                const categories = getUniqueCategories();
+                categoryFiltersContainer.innerHTML = '';
+
+                categories.forEach(category => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center';
+                    div.innerHTML = `
+                        <input type="checkbox" id="cat-${category}" value="${category}"
+                               class="category-checkbox h-4 w-4 text-purple-600 rounded focus:ring-purple-500 cursor-pointer">
+                        <label for="cat-${category}" class="ml-2 text-gray-700 cursor-pointer">${category}</label>
+                    `;
+                    categoryFiltersContainer.appendChild(div);
+
+                    if (selectedCategories.has(category)) {
+                        div.querySelector('.category-checkbox').checked = true;
+                    }
+                });
+
+                document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+                    // Use a flag to prevent adding multiple listeners
+                    if (!checkbox._hasListeners) {
+                        checkbox.addEventListener('change', categoryCheckboxHandler);
+                        checkbox._hasListeners = true;
+                    }
+                });
+            };
+
+            const categoryCheckboxHandler = (event) => {
+                if (event.target.checked) {
+                    selectedCategories.add(event.target.value);
+                } else {
+                    selectedCategories.delete(event.target.value);
+                }
+                updateProductDisplay();
+            };
+
+            const renderProducts = (productsToRender) => {
+                const productGrid = document.getElementById('product-grid');
+                const noProductsMessage = document.getElementById('no-products-message');
+                productGrid.innerHTML = '';
+
+                if (productsToRender.length === 0) {
+                    noProductsMessage.classList.remove('hidden');
+                    return;
+                } else {
+                    noProductsMessage.classList.add('hidden');
+                }
+
+                productsToRender.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-xl';
+                    productCard.innerHTML = `
+                        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/333333?text=Image+Not+Found';">
+                        <div class="p-5">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">${product.name}</h3>
+                            <p class="text-sm text-gray-500 mb-2">${product.category}</p>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-2xl font-bold text-purple-600">₹${product.price.toFixed(2)}</span>
+                                <div class="flex items-center text-yellow-500">
+                                    <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.92 8.72c-.783-.57-.381-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z"></path></svg>
+                                    <span class="text-gray-700">${product.rating.toFixed(1)}</span>
+                                </div>
+                            </div>
+                            <button class="w-full bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600 transition duration-300">Add to Cart</button>
+                        </div>
+                    `;
+                    productGrid.appendChild(productCard);
+                });
+            };
+
+            const filterProducts = (products) => {
+                let filtered = products;
+                if (selectedCategories.size > 0) {
+                    filtered = filtered.filter(product => selectedCategories.has(product.category));
+                }
+                filtered = filtered.filter(product => product.price <= maxPrice);
+                return filtered;
+            };
+
+            const sortProducts = (products, criteria) => {
+                const sorted = [...products];
+                switch (criteria) {
+                    case 'price-asc': sorted.sort((a, b) => a.price - b.price); break;
+                    case 'price-desc': sorted.sort((a, b) => b.price - a.price); break;
+                    case 'rating-desc': sorted.sort((a, b) => b.rating - a.rating); break;
+                    case 'rating-asc': sorted.sort((a, b) => a.rating - b.rating); break;
+                    case 'default': default: sorted.sort((a, b) => a.id - b.id); break;
+                }
+                return sorted;
+            };
+
+            const updateProductDisplay = () => {
+                let filteredProducts = filterProducts(allProducts);
+                let finalProducts = sortProducts(filteredProducts, currentSort);
+                renderProducts(finalProducts);
+            };
+
+            const priceRangeInputHandler = (event) => {
+                maxPrice = parseFloat(event.target.value);
+                document.getElementById('max-price-display').textContent = `₹${maxPrice}`;
+                updateProductDisplay();
+            };
+
+            const sortBySelectHandler = (event) => {
+                currentSort = event.target.value;
+                updateProductDisplay();
+            };
+
+            // --- Common Utility Functions ---
+            /**
+             * Displays a temporary status message within a specific app section.
+             * @param {string} sectionId - The ID of the section where the message should appear.
+             * @param {string} message - The message text.
+             * @param {string} className - Tailwind CSS classes for styling (e.g., 'text-red-500 bg-red-100').
+             */
+            const displayStatusMessage = (sectionId, message, className) => {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+
+                let statusDiv = section.querySelector('.status-message');
+                if (!statusDiv) {
+                    statusDiv = document.createElement('div');
+                    statusDiv.className = 'status-message text-center mt-4 p-2 rounded-md';
+                    // Find a good place to insert based on section structure
+                    if (sectionId === 'todo-app') {
+                        section.querySelector('.bg-white').prepend(statusDiv); // Before input field
+                    } else if (sectionId === 'products-page') {
+                        // Find the main content area within the products-page section
+                        const productsMainContent = section.querySelector('.container.mx-auto.flex.flex-col.lg\\:flex-row.gap-8.flex-grow');
+                        if (productsMainContent) {
+                            productsMainContent.prepend(statusDiv);
+                        } else {
+                            section.prepend(statusDiv); // Fallback
+                        }
+                    } else {
+                         section.prepend(statusDiv);
+                    }
+                }
+                statusDiv.textContent = message;
+                statusDiv.className = `status-message text-center mt-4 p-2 rounded-md ${className}`;
+                setTimeout(() => statusDiv.remove(), 3000);
+            };
+
+            /**
+             * Shows a custom confirmation modal.
+             * @param {string} message - The confirmation message.
+             * @param {function} onConfirm - Callback function (receives boolean: true for yes, false for no).
+             */
+            const showConfirmationModal = (message, onConfirm) => {
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-[1000]'; // High z-index
+                modal.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                        <p class="text-lg font-semibold mb-4">${message}</p>
+                        <div class="flex justify-center space-x-4">
+                            <button id="confirm-yes" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">Yes</button>
+                            <button id="confirm-no" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-md">No</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                document.getElementById('confirm-yes').onclick = () => {
+                    onConfirm(true);
+                    modal.remove();
+                };
+                document.getElementById('confirm-no').onclick = () => {
+                    onConfirm(false);
+                    modal.remove();
+                };
+            };
+        });
+    </script>
+</body>
+</html>
