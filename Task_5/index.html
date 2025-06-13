@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Personal Finance Dashboard</title>
+    <link rel="icon" href="https://www.flaticon.com/svg/static/icons/svg/2928/2928346.svg" type="image/svg+xml">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* --- CSS Variables for Easy Theming --- */
+        :root {
+            --primary-color: #28a745; /* Green for income/positive */
+            --secondary-color: #dc3545; /* Red for expenses/negative */
+            --accent-color: #007bff; /* Blue for actions/highlights */
+            --text-color: #343a40;
+            --light-text-color: #6c757d;
+            --bg-color: #f8f9fa;
+            --card-bg-color: #ffffff;
+            --border-color: #e9ecef;
+            --input-bg-color: #f0f2f5; /* Light grey for input backgrounds */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+            --spacing-unit: 16px;
+            --font-main: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
+        }
+
+        /* --- Dark Mode Variables --- */
+        html.dark-mode {
+            --primary-color: #66bb6a;
+            --secondary-color: #ef5350;
+            --accent-color: #81b1ff;
+            --text-color: #e0e0e0;
+            --light-text-color: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --card-bg-color: #2c2c2c;
+            --border-color: #444;
+            --input-bg-color: #3a3a3a;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* --- Global Reset & Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 70px; /* Space for fixed dark mode toggle */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-unit);
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--primary-color);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--text-color);
+            margin-bottom: var(--spacing-unit);
+        }
+        h1 { font-size: 2.8rem; text-align: center; margin-bottom: 2rem; }
+        h2 { font-size: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1.5rem;}
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.2rem; }
+
+        /* --- Header / Navbar --- */
+        header {
+            background-color: var(--card-bg-color);
+            padding: var(--spacing-unit) 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+        .navbar-brand {
+            color: var(--accent-color);
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            padding: 10px 0;
+        }
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-grow: 1; /* Allow nav items to take space */
+            justify-content: flex-end; /* Align nav items to the right */
+        }
+        .nav-item {
+            margin-left: 20px;
+        }
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 0;
+            transition: color 0.2s ease, border-bottom 0.2s ease;
+            border-bottom: 2px solid transparent;
+            display: block;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+        }
+
+        /* Hamburger menu for mobile */
+        .navbar-toggler {
+            display: none; /* Hidden on desktop */
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 5px;
+        }
+        @media (max-width: 768px) {
+            .navbar-nav {
+                flex-direction: column;
+                width: 100%;
+                display: none; /* Hidden by default on mobile */
+                margin-top: 10px;
+            }
+            .navbar-nav.active {
+                display: flex; /* Show when active */
+            }
+            .nav-item {
+                margin: 0;
+                width: 100%;
+                text-align: center;
+            }
+            .nav-link {
+                padding: 10px 0;
+                border-bottom: none; /* Remove bottom border for mobile links */
+            }
+            .nav-link:hover, .nav-link.active {
+                background-color: var(--input-bg-color);
+                border-radius: var(--border-radius);
+            }
+            .navbar-toggler {
+                display: block; /* Show hamburger icon */
+            }
+        }
+
+
+        /* --- Main Layout --- */
+        main {
+            flex-grow: 1;
+        }
+
+        .section {
+            display: none; /* Hidden by default, shown by JS */
+        }
+        .section.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            gap: var(--spacing-unit);
+            grid-template-columns: 1fr; /* Single column on mobile */
+        }
+
+        .card {
+            background-color: var(--card-bg-color);
+            padding: var(--spacing-unit);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: border-color 0.2s ease;
+        }
+        .card:hover {
+            border-color: var(--accent-color);
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+            }
+            .dashboard-grid .span-2 {
+                grid-column: span 2; /* Span two columns for wider elements */
+            }
+        }
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr; /* Three columns on very large screens */
+            }
+            .dashboard-grid .span-3 {
+                grid-column: span 3;
+            }
+        }
+
+        /* --- Overview Card --- */
+        .overview-card {
+            text-align: center;
+            justify-content: space-around;
+        }
+        .overview-card .balance, .overview-card .income, .overview-card .expenses {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        .overview-card .balance { color: var(--accent-color); }
+        .overview-card .income { color: var(--primary-color); }
+        .overview-card .expenses { color: var(--secondary-color); }
+        .overview-card .label {
+            font-size: 0.9rem;
+            color: var(--light-text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .overview-summary {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .overview-summary > div {
+            flex: 1 1 45%; /* Allow wrapping */
+            min-width: 120px;
+            margin: 0.5rem;
+        }
+
+        /* --- Form Elements --- */
+        .transaction-form-card form, .budget-form-card form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-unit);
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-group .error-message {
+            color: var(--secondary-color);
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+            display: none; /* Hidden by default */
+        }
+        .form-group.invalid input,
+        .form-group.invalid select,
+        .form-group.invalid textarea {
+            border-color: var(--secondary-color);
+        }
+        .form-group.invalid .error-message {
+            display: block;
+        }
+
+        /* Transaction Type Buttons */
+        .transaction-type-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: var(--spacing-unit);
+        }
+        .transaction-type-buttons button {
+            flex: 1;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--border-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: normal;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .transaction-type-buttons button.active {
+            color: white;
+        }
+        .transaction-type-buttons button.active.income {
+            background-color: var(--primary-color);
+        }
+        .transaction-type-buttons button.active.expense {
+            background-color: var(--secondary-color);
+        }
+        .transaction-type-buttons button:not(.active):hover {
+            background-color: var(--input-bg-color);
+        }
+
+        /* Generic Button Styling */
+        button[type="submit"], .btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: fit-content; /* Make button fit content */
+        }
+        button[type="submit"]:hover, .btn:hover {
+            background-color: #0056b3; /* Darker blue */
+            transform: translateY(-1px);
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        .btn-danger {
+            background-color: var(--secondary-color);
+        }
+        .btn-danger:hover {
+            background-color: #b22222;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+        .btn-outline:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+
+        /* --- Transaction List --- */
+        .transaction-list-card {
+            overflow-x: auto; /* Enable horizontal scroll for small screens */
+        }
+        .transaction-list-card .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: var(--spacing-unit);
+            align-items: flex-end;
+        }
+        .transaction-list-card .toolbar .form-group {
+            margin-bottom: 0; /* Remove extra margin */
+            flex: 1 1 150px; /* Allow items to grow/shrink */
+        }
+        .transaction-list-card .toolbar .form-group label {
+            font-size: 0.85rem;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+        }
+        .transaction-list-card .toolbar button {
+            margin-top: auto; /* Align buttons at the bottom */
+        }
+        .transaction-list-card #live-search-input {
+            min-width: 180px;
+        }
+
+
+        .transaction-list-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            table-layout: auto; /* Or fixed for more control */
+            min-width: 700px; /* Ensure table doesn't get too squished */
+        }
+        .transaction-list-card thead th {
+            text-align: left;
+            padding: 0.8rem;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            background-color: var(--card-bg-color); /* Sticky header background */
+            z-index: 10;
+        }
+        .transaction-list-card thead th i {
+            margin-left: 5px;
+            font-size: 0.8em;
+            color: var(--light-text-color);
+        }
+        .transaction-list-card thead th.sort-asc i:before { content: "\f0de"; } /* fa-sort-up */
+        .transaction-list-card thead th.sort-desc i:before { content: "\f0dd"; } /* fa-sort-down */
+        .transaction-list-card thead th:hover i {
+             color: var(--accent-color);
+        }
+
+        .transaction-list-card tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+        .transaction-list-card tbody tr:hover {
+            background-color: var(--input-bg-color);
+        }
+        .transaction-list-card tbody td {
+            padding: 0.8rem;
+            vertical-align: top;
+            white-space: nowrap; /* Prevent wrapping for amount/date */
+        }
+        .transaction-list-card .transaction-amount {
+            font-weight: bold;
+        }
+        .transaction-list-card .transaction-amount.income {
+            color: var(--primary-color);
+        }
+        .transaction-list-card .transaction-amount.expense {
+            color: var(--secondary-color);
+        }
+        .transaction-list-card .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .transaction-list-card .action-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--light-text-color);
+            transition: color 0.2s ease;
+            padding: 5px; /* Make clickable area larger */
+        }
+        .transaction-list-card .action-btn:hover {
+            color: var(--accent-color);
+        }
+        .transaction-list-card .action-btn.delete-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        /* No Transactions Message */
+        .no-transactions-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-text-color);
+            font-style: italic;
+        }
+
+
+        /* --- Budget Chart (Advanced CSS Chart Simulation) --- */
+        .budget-chart-card h2 {
+            margin-bottom: 1.5rem;
+        }
+        .budget-chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-unit);
+        }
+        .budget-item {
+            padding: 10px;
+            background-color: var(--input-bg-color);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+        .budget-item:hover {
+            background-color: var(--border-color);
+        }
+        .budget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .budget-header .category-name {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .budget-header .amount-info {
+            font-size: 0.9em;
+            color: var(--light-text-color);
+        }
+        .budget-bar-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            height: 12px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .budget-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.5s ease-out, background-color 0.3s ease;
+        }
+        .budget-bar.over-budget {
+            background-color: var(--secondary-color);
+        }
+        .budget-item-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+
+        /* --- Modals (Detailed Transaction View & Edit) --- */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px); /* Modern blur effect */
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background-color: var(--card-bg-color);
+            padding: var(--spacing-unit) * 1.5;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            animation: fadeInScale 0.3s forwards;
+            border: 1px solid var(--border-color);
+            max-height: 90vh; /* Make modal scrollable if content is long */
+            overflow-y: auto;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-unit);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .modal-header h3 {
+            margin: 0;
+            color: var(--accent-color);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light-text-color);
+            transition: color 0.2s ease;
+        }
+        .modal-close:hover {
+            color: var(--secondary-color);
+        }
+        .modal-body p {
+            margin-bottom: 0.7rem;
+            color: var(--text-color);
+        }
+        .modal-body p strong {
+            color: var(--text-color);
+        }
+        .modal-body span {
+            color: var(--light-text-color);
+        }
+        .modal-body .transaction-type {
+            font-weight: bold;
+        }
+        .modal-body .transaction-type.income { color: var(--primary-color); }
+        .modal-body .transaction-type.expense { color: var(--secondary-color); }
+
+        /* Edit Transaction Form in Modal */
+        #edit-transaction-modal .form-group {
+            margin-bottom: var(--spacing-unit);
+        }
+        #edit-transaction-modal .form-group:last-of-type {
+            margin-bottom: 0;
+        }
+        #edit-transaction-modal .modal-footer {
+            margin-top: var(--spacing-unit);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+
+        /* --- Toast Notifications --- */
+        #toast-container {
+            position: fixed;
+            bottom: var(--spacing-unit);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background-color: var(--text-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            transform: translateY(20px);
+            min-width: 250px;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success { background-color: var(--primary-color); }
+        .toast.error { background-color: var(--secondary-color); }
+        .toast.info { background-color: var(--accent-color); }
+
+
+        /* --- Dark Mode Toggle Button --- */
+        .dark-mode-toggle {
+            background-color: var(--light-text-color);
+            color: #fff;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+            position: fixed;
+            bottom: var(--spacing-unit);
+            right: var(--spacing-unit);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: var(--spacing-unit) 0;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#overview" class="navbar-brand nav-link" data-section="overview">
+                    <i class="fas fa-chart-line"></i> Finance Dashboard
+                </a>
+                <button class="navbar-toggler" id="navbar-toggler" aria-label="Toggle navigation menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="navbar-nav" id="navbar-nav">
+                    <li class="nav-item">
+                        <a href="#overview" class="nav-link active" data-section="overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#add-transaction" class="nav-link" data-section="add-transaction">Add Transaction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#transaction-history" class="nav-link" data-section="transaction-history">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#budgets" class="nav-link" data-section="budgets">Budgets</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="overview" class="section active">
+            <div class="dashboard-grid">
+                <div class="card overview-card span-3">
+                    <h2>Your Financial Overview</h2>
+                    <div class="overview-summary">
+                        <div>
+                            <p class="label">Current Balance</p>
+                            <p class="balance" id="current-balance">₹0.00</p>
+                        </div>
+                        <div>
+                            <p class="label">Total Income</p>
+                            <p class="income" id="total-income">₹0.00</p>
+                        </div>
+                        <div>
+                            <p class="label">Total Expenses</p>
+                            <p class="expenses" id="total-expenses">₹0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="add-transaction" class="section">
+            <div class="dashboard-grid">
+                <div class="card transaction-form-card span-3">
+                    <h2>Add New Transaction</h2>
+                    <form id="transaction-form">
+                        <div class="form-group">
+                            <label for="transaction-name">Description</label>
+                            <input type="text" id="transaction-name" placeholder="e.g., Groceries, Salary" required aria-label="Transaction description">
+                            <span class="error-message">Description is required.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-amount">Amount (₹)</label>
+                            <input type="number" id="transaction-amount" step="0.01" min="0.01" placeholder="e.g., 500.50" required aria-label="Transaction amount">
+                            <span class="error-message">Amount must be a positive number.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-date">Date</label>
+                            <input type="date" id="transaction-date" required aria-label="Transaction date">
+                            <span class="error-message">Date is required.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-category">Category</label>
+                            <select id="transaction-category" required aria-label="Transaction category">
+                                <option value="">-- Select Category --</option>
+                                </select>
+                            <span class="error-message">Category is required.</span>
+                        </div>
+                         <div class="form-group">
+                            <label for="transaction-payment-method">Payment Method</label>
+                            <select id="transaction-payment-method" required aria-label="Payment Method">
+                                <option value="">-- Select Method --</option>
+                                </select>
+                            <span class="error-message">Payment method is required.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-tags">Tags (comma-separated)</label>
+                            <input type="text" id="transaction-tags" placeholder="e.g., lunch, work, online" aria-label="Transaction tags">
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <div class="transaction-type-buttons">
+                                <button type="button" class="type-btn active income" data-type="income" aria-pressed="true">
+                                    <i class="fas fa-plus-circle"></i> Income
+                                </button>
+                                <button type="button" class="type-btn expense" data-type="expense" aria-pressed="false">
+                                    <i class="fas fa-minus-circle"></i> Expense
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit">
+                            <i class="fas fa-save"></i> Add Transaction
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="transaction-history" class="section">
+            <div class="dashboard-grid">
+                <div class="card transaction-list-card span-3">
+                    <h2>Transaction History</h2>
+                    <div class="toolbar">
+                        <div class="form-group">
+                            <label for="filter-type">Filter Type:</label>
+                            <select id="filter-type" aria-label="Filter transactions by type">
+                                <option value="all">All</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-category">Filter Category:</label>
+                            <select id="filter-category" aria-label="Filter transactions by category">
+                                <option value="all">All Categories</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-start-date">From Date:</label>
+                            <input type="date" id="filter-start-date" aria-label="Filter transactions from date">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-end-date">To Date:</label>
+                            <input type="date" id="filter-end-date" aria-label="Filter transactions to date">
+                        </div>
+                         <div class="form-group">
+                            <label for="live-search-input">Search:</label>
+                            <input type="text" id="live-search-input" placeholder="Search description, tags..." aria-label="Live search transactions">
+                        </div>
+                        <button id="export-csv-btn" class="btn btn-outline btn-sm"><i class="fas fa-download"></i> Export CSV</button>
+                    </div>
+
+                    <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--border-radius);">
+                        <table id="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="name">Description <i class="fas fa-sort"></i></th>
+                                    <th data-sort="amount">Amount <i class="fas fa-sort"></i></th>
+                                    <th data-sort="category">Category <i class="fas fa-sort"></i></th>
+                                    <th data-sort="date">Date <i class="fas fa-sort"></i></th>
+                                    <th>Method</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="6" class="no-transactions-message">No transactions yet. Add one above or adjust filters.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="budgets" class="section">
+            <div class="dashboard-grid">
+                <div class="card budget-chart-card span-3">
+                    <h2>Spending by Category & Budget</h2>
+                    <div id="budget-chart-container" class="budget-chart-container">
+                        <p class="no-transactions-message">No expenses or budgets recorded yet.</p>
+                    </div>
+                    <h3 style="margin-top: 2rem;">Set Category Budgets</h3>
+                    <form id="budget-form">
+                        <div class="form-group">
+                            <label for="budget-category">Category</label>
+                            <select id="budget-category" required aria-label="Select category for budget">
+                                <option value="">-- Select Category --</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="budget-amount">Monthly Budget (₹)</label>
+                            <input type="number" id="budget-amount" step="0.01" min="0" required aria-label="Monthly budget amount">
+                        </div>
+                        <button type="submit" class="btn-sm"><i class="fas fa-money-bill-alt"></i> Set Budget</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Advanced Personal Finance Dashboard. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="dark-mode-toggle" id="dark-mode-toggle" aria-label="Toggle dark mode theme">
+        <i class="fas fa-moon"></i> Dark Mode
+    </button>
+
+    <div id="transaction-detail-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-transaction-title">Transaction Details</h3>
+                <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                <p><strong>Amount:</strong> <span id="modal-amount"></span></p>
+                <p><strong>Type:</strong> <span id="modal-type" class="transaction-type"></span></p>
+                <p><strong>Category:</strong> <span id="modal-category"></span></p>
+                <p><strong>Payment Method:</strong> <span id="modal-payment-method"></span></p>
+                <p><strong>Date:</strong> <span id="modal-date"></span></p>
+                <p><strong>Tags:</strong> <span id="modal-tags"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-transaction-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Transaction</h3>
+                <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-transaction-form">
+                <input type="hidden" id="edit-transaction-id">
+                <div class="form-group">
+                    <label for="edit-transaction-name">Description</label>
+                    <input type="text" id="edit-transaction-name" required>
+                    <span class="error-message">Description is required.</span>
+                </div>
+                <div class="form-group">
+                    <label for="edit-transaction-amount">Amount (₹)</label>
+                    <input type="number" id="edit-transaction-amount" step="0.01" min="0.01" required>
+                    <span class="error-message">Amount must be a positive number.</span>
+                </div>
+                 <div class="form-group">
+                    <label for="edit-transaction-date">Date</label>
+                    <input type="date" id="edit-transaction-date" required>
+                    <span class="error-message">Date is required.</span>
+                </div>
+                <div class="form-group">
+                    <label for="edit-transaction-category">Category</label>
+                    <select id="edit-transaction-category" required>
+                        </select>
+                    <span class="error-message">Category is required.</span>
+                </div>
+                <div class="form-group">
+                    <label for="edit-transaction-payment-method">Payment Method</label>
+                    <select id="edit-transaction-payment-method" required>
+                        </select>
+                    <span class="error-message">Payment method is required.</span>
+                </div>
+                <div class="form-group">
+                    <label for="edit-transaction-tags">Tags (comma-separated)</label>
+                    <input type="text" id="edit-transaction-tags">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <div class="transaction-type-buttons" id="edit-transaction-type-buttons">
+                        <button type="button" class="type-btn income" data-type="income">
+                            <i class="fas fa-plus-circle"></i> Income
+                        </button>
+                        <button type="button" class="type-btn expense" data-type="expense">
+                            <i class="fas fa-minus-circle"></i> Expense
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="cancel-edit-btn">Cancel</button>
+                    <button type="submit" class="btn"><i class="fas fa-save"></i> Update Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // --- Dummy Data & Configuration ---
+        const CATEGORIES = [
+            'Food', 'Transport', 'Housing', 'Utilities', 'Entertainment', 'Shopping',
+            'Healthcare', 'Education', 'Salary', 'Freelance', 'Investment', 'Gifts', 'Other'
+        ];
+        const PAYMENT_METHODS = ['Cash', 'Credit Card', 'Debit Card', 'Bank Transfer', 'UPI', 'Other'];
+
+        // Initial Dummy Transactions (for a more realistic starting point)
+        const initialDummyTransactions = [
+            { id: Date.now() - 50000, name: 'Monthly Salary', amount: 50000, type: 'income', category: 'Salary', paymentMethod: 'Bank Transfer', date: '2025-06-01', tags: 'work, main' },
+            { id: Date.now() - 40000, name: 'Groceries (SuperMart)', amount: 3500, type: 'expense', category: 'Food', paymentMethod: 'Debit Card', date: '2025-06-02', tags: 'essentials, home' },
+            { id: Date.now() - 30000, name: 'Electricity Bill', amount: 1800, type: 'expense', category: 'Utilities', paymentMethod: 'UPI', date: '2025-06-03', tags: 'monthly, home' },
+            { id: Date.now() - 20000, name: 'Dinner with Friends', amount: 1200, type: 'expense', category: 'Entertainment', paymentMethod: 'Credit Card', date: '2025-06-05', tags: 'social, restaurant' },
+            { id: Date.now() - 10000, name: 'Bus Fare', amount: 80, type: 'expense', category: 'Transport', paymentMethod: 'Cash', date: '2025-06-06', tags: 'daily, commute' },
+            { id: Date.now() - 5000, name: 'Freelance Project Pay', amount: 15000, type: 'income', category: 'Freelance', paymentMethod: 'Bank Transfer', date: '2025-06-08', tags: 'side-income' },
+            { id: Date.now() - 1000, name: 'New Book', amount: 450, type: 'expense', category: 'Shopping', paymentMethod: 'UPI', date: '2025-06-10', tags: 'hobby, learning' },
+            { id: Date.now(), name: 'Internet Bill', amount: 999, type: 'expense', category: 'Utilities', paymentMethod: 'Bank Transfer', date: '2025-06-12', tags: 'monthly' }
+        ];
+
+
+        // --- DOM Elements ---
+        const currentBalanceEl = document.getElementById('current-balance');
+        const totalIncomeEl = document.getElementById('total-income');
+        const totalExpensesEl = document.getElementById('total-expenses');
+
+        const transactionForm = document.getElementById('transaction-form');
+        const transactionNameInput = document.getElementById('transaction-name');
+        const transactionAmountInput = document.getElementById('transaction-amount');
+        const transactionDateInput = document.getElementById('transaction-date');
+        const transactionCategorySelect = document.getElementById('transaction-category');
+        const transactionPaymentMethodSelect = document.getElementById('transaction-payment-method');
+        const transactionTagsInput = document.getElementById('transaction-tags');
+        const transactionTypeButtons = document.querySelector('.transaction-type-buttons');
+
+        const transactionsTableBody = document.querySelector('#transactions-table tbody');
+        const transactionsTableHead = document.querySelector('#transactions-table thead');
+        const liveSearchInput = document.getElementById('live-search-input');
+        const filterTypeSelect = document.getElementById('filter-type');
+        const filterCategorySelect = document.getElementById('filter-category');
+        const filterStartDateInput = document.getElementById('filter-start-date');
+        const filterEndDateInput = document.getElementById('filter-end-date');
+        const exportCsvBtn = document.getElementById('export-csv-btn');
+
+        const budgetChartContainer = document.getElementById('budget-chart-container');
+        const budgetForm = document.getElementById('budget-form');
+        const budgetCategorySelect = document.getElementById('budget-category');
+        const budgetAmountInput = document.getElementById('budget-amount');
+
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const toastContainer = document.getElementById('toast-container');
+
+        // Navbar elements
+        const navbarToggler = document.getElementById('navbar-toggler');
+        const navbarNav = document.getElementById('navbar-nav');
+        const navLinks = document.querySelectorAll('.nav-link[data-section]');
+        const sections = document.querySelectorAll('.section');
+
+        // Modals
+        const transactionDetailModal = document.getElementById('transaction-detail-modal');
+        const editTransactionModal = document.getElementById('edit-transaction-modal');
+        const editTransactionForm = document.getElementById('edit-transaction-form');
+        const modalCloseButtons = document.querySelectorAll('.modal-close');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+
+
+        // --- Global Data Stores ---
+        let transactions = [];
+        let budgets = {}; // Stores budgets per category: { "Food": 5000, "Transport": 2000 }
+        let activeTransactionType = 'income'; // For Add Transaction form
+        let currentSortColumn = 'date';
+        let currentSortOrder = 'desc'; // 'asc' or 'desc'
+
+        // --- Helper Function to Format Currency (Indian Rupees) ---
+        const currencyFormatter = new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 2,
+        });
+
+        function formatCurrency(amount) {
+            return currencyFormatter.format(amount);
+        }
+
+        /**
+         * Shows a toast notification.
+         * @param {string} message - The message to display.
+         * @param {'success'|'error'|'info'} type - Type of toast (influences color).
+         * @param {number} duration - How long the toast should be visible in ms.
+         */
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+
+            // Trigger reflow to ensure transition works
+            void toast.offsetWidth;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, duration);
+        }
+
+        // --- Data Persistence ---
+        function saveToLocalStorage() {
+            localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+            localStorage.setItem('financeBudgets', JSON.stringify(budgets));
+        }
+
+        function loadFromLocalStorage() {
+            const savedTransactions = localStorage.getItem('financeTransactions');
+            const savedBudgets = localStorage.getItem('financeBudgets');
+
+            if (savedTransactions) {
+                transactions = JSON.parse(savedTransactions);
+            } else {
+                // If no saved data, use initial dummy data
+                transactions = initialDummyTransactions;
+            }
+
+            if (savedBudgets) {
+                budgets = JSON.parse(savedBudgets);
+            } else {
+                budgets = {}; // Start with no budgets
+            }
+        }
+
+        // --- Form Validation Helpers ---
+        function validateInput(inputElement) {
+            const formGroup = inputElement.closest('.form-group');
+            if (!formGroup) return true; // Not a validation-enabled group
+
+            const errorMessageEl = formGroup.querySelector('.error-message');
+            let isValid = true;
+
+            if (inputElement.hasAttribute('required') && inputElement.value.trim() === '') {
+                isValid = false;
+                errorMessageEl.textContent = inputElement.dataset.errorMessage || `${inputElement.previousElementSibling.textContent.replace(':', '')} is required.`;
+            } else if (inputElement.type === 'number' && parseFloat(inputElement.value) <= 0) {
+                isValid = false;
+                errorMessageEl.textContent = inputElement.dataset.errorMessage || `Amount must be a positive number.`;
+            } else {
+                errorMessageEl.textContent = '';
+            }
+
+            formGroup.classList.toggle('invalid', !isValid);
+            return isValid;
+        }
+
+        function validateForm(form) {
+            let allValid = true;
+            const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+            inputs.forEach(input => {
+                if (!validateInput(input)) {
+                    allValid = false;
+                }
+            });
+            return allValid;
+        }
+
+        // --- Populate Select Options ---
+        function populateSelectOptions() {
+            const createOptions = (selectEl, optionsArray) => {
+                selectEl.innerHTML = selectEl.querySelector('option[value=""]') ? '<option value="">' + selectEl.querySelector('option[value=""]').textContent + '</option>' : ''; // Preserve default option
+                optionsArray.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.textContent = item;
+                    selectEl.appendChild(option);
+                });
+            };
+
+            // Add Transaction form
+            createOptions(transactionCategorySelect, CATEGORIES);
+            createOptions(transactionPaymentMethodSelect, PAYMENT_METHODS);
+
+            // Edit Transaction form (these are populated on modal open, but keeping this for initial structure)
+            createOptions(document.getElementById('edit-transaction-category'), CATEGORIES);
+            createOptions(document.getElementById('edit-transaction-payment-method'), PAYMENT_METHODS);
+
+
+            // Filter Category dropdown
+            const filterCategoryOptions = [...CATEGORIES]; // Copy array
+            filterCategoryOptions.sort(); // Sort alphabetically
+            filterCategorySelect.innerHTML = '<option value="all">All Categories</option>'; // Clear first
+            filterCategoryOptions.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                filterCategorySelect.appendChild(option);
+            });
+
+            // Budget Category dropdown (exclude income categories)
+            const budgetCategories = CATEGORIES.filter(cat => !['Salary', 'Freelance', 'Investment', 'Gifts'].includes(cat));
+            createOptions(budgetCategorySelect, budgetCategories);
+        }
+
+
+        // --- Core UI Update Functions ---
+
+        /**
+         * Updates the financial overview (Balance, Income, Expenses).
+         */
+        function updateOverview() {
+            const income = transactions
+                .filter(t => t.type === 'income')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            const expenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            const balance = income - expenses;
+
+            currentBalanceEl.textContent = formatCurrency(balance);
+            totalIncomeEl.textContent = formatCurrency(income);
+            totalExpensesEl.textContent = formatCurrency(expenses);
+
+            // Update balance color based on positive/negative
+            if (balance < 0) {
+                currentBalanceEl.style.color = 'var(--secondary-color)';
+            } else {
+                currentBalanceEl.style.color = 'var(--primary-color)';
+            }
+        }
+
+        /**
+         * Renders transactions into the table based on current filters and sort order.
+         */
+        function renderTransactionsTable() {
+            const searchTerm = liveSearchInput.value.toLowerCase().trim();
+            const filterType = filterTypeSelect.value;
+            const filterCategory = filterCategorySelect.value;
+            const startDate = filterStartDateInput.value ? new Date(filterStartDateInput.value + 'T00:00:00') : null; // Add time for accurate comparison
+            const endDate = filterEndDateInput.value ? new Date(filterEndDateInput.value + 'T23:59:59') : null; // To include end date
+
+            let filteredTransactions = transactions.filter(t => {
+                const transactionDate = new Date(t.date + 'T00:00:00'); // Ensure date comparison consistency
+
+                // Type filter
+                if (filterType !== 'all' && t.type !== filterType) return false;
+                // Category filter
+                if (filterCategory !== 'all' && t.category !== filterCategory) return false;
+                // Date range filter
+                if (startDate && transactionDate < startDate) return false;
+                if (endDate && transactionDate > endDate) return false;
+                // Search filter
+                if (searchTerm && !(t.name.toLowerCase().includes(searchTerm) ||
+                                    t.category.toLowerCase().includes(searchTerm) ||
+                                    t.paymentMethod.toLowerCase().includes(searchTerm) ||
+                                    (t.tags && t.tags.toLowerCase().includes(searchTerm)))) return false;
+                return true;
+            });
+
+            // Sorting
+            filteredTransactions.sort((a, b) => {
+                let valA, valB;
+                if (currentSortColumn === 'amount') {
+                    valA = a.amount;
+                    valB = b.amount;
+                } else if (currentSortColumn === 'date') {
+                    valA = new Date(a.date);
+                    valB = new Date(b.date);
+                } else { // name, category, etc.
+                    valA = String(a[currentSortColumn]).toLowerCase();
+                    valB = String(b[currentSortColumn]).toLowerCase();
+                }
+
+                if (valA < valB) return currentSortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            transactionsTableBody.innerHTML = ''; // Clear existing rows
+
+            if (filteredTransactions.length === 0) {
+                transactionsTableBody.innerHTML = `<tr><td colspan="6" class="no-transactions-message">No transactions match your current filters.</td></tr>`;
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            filteredTransactions.forEach(t => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', t.id);
+                row.innerHTML = `
+                    <td>${t.name}</td>
+                    <td class="transaction-amount ${t.type}">${t.type === 'expense' ? '-' : ''}${formatCurrency(t.amount)}</td>
+                    <td>${t.category}</td>
+                    <td>${t.date}</td>
+                    <td>${t.paymentMethod}</td>
+                    <td class="actions">
+                        <button class="action-btn view-btn" aria-label="View transaction details"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn edit-btn" aria-label="Edit transaction"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" aria-label="Delete transaction"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                fragment.appendChild(row);
+            });
+
+            transactionsTableBody.appendChild(fragment);
+        }
+
+        /**
+         * Renders the budget overview chart based on current expenses and budgets.
+         */
+        function renderBudgetOverview() {
+            const expenseByCategories = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((acc, t) => {
+                    acc[t.category] = (acc[t.category] || 0) + t.amount;
+                    return acc;
+                }, {});
+
+            budgetChartContainer.innerHTML = ''; // Clear previous content
+
+            if (Object.keys(expenseByCategories).length === 0 && Object.keys(budgets).length === 0) {
+                budgetChartContainer.innerHTML = '<p class="no-transactions-message">No expenses or budgets recorded yet.</p>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            // Combine all categories (from transactions and budgets)
+            const allCategories = new Set([...Object.keys(expenseByCategories), ...Object.keys(budgets)].sort());
+
+            allCategories.forEach(category => {
+                const spent = expenseByCategories[category] || 0;
+                const budgetLimit = budgets[category] || 0;
+
+                // Only show if there's spending or a budget for it
+                if (spent === 0 && budgetLimit === 0) return;
+
+                const percentage = budgetLimit > 0 ? (spent / budgetLimit) * 100 : (spent > 0 ? 100 : 0); // If no budget, 100% if spent, 0% if not
+                const isOverBudget = budgetLimit > 0 && spent > budgetLimit;
+
+                const budgetItem = document.createElement('div');
+                budgetItem.classList.add('budget-item');
+                budgetItem.innerHTML = `
+                    <div class="budget-header">
+                        <span class="category-name">${category}</span>
+                        <span class="amount-info">
+                            Spent: ${formatCurrency(spent)} / Budget: ${formatCurrency(budgetLimit)}
+                        </span>
+                    </div>
+                    <div class="budget-bar-wrapper">
+                        <div class="budget-bar ${isOverBudget ? 'over-budget' : ''}" style="width: ${Math.min(percentage, 100)}%;"></div>
+                    </div>
+                    <div class="budget-item-actions">
+                        <button class="btn btn-sm btn-outline edit-budget-btn" data-category="${category}" aria-label="Edit budget for ${category}"><i class="fas fa-edit"></i> Edit Budget</button>
+                        ${budgetLimit > 0 ? `<button class="btn btn-sm btn-danger delete-budget-btn" data-category="${category}" aria-label="Delete budget for ${category}"><i class="fas fa-trash"></i> Delete Budget</button>` : ''}
+                    </div>
+                `;
+                fragment.appendChild(budgetItem);
+            });
+
+            budgetChartContainer.appendChild(fragment);
+        }
+
+
+        // --- Modals Logic ---
+
+        function openModal(modalElement) {
+            modalElement.classList.add('show');
+            // Add event listener to close modal on overlay click
+            modalElement.addEventListener('click', closeIfOverlay);
+        }
+
+        function closeModal(modalElement) {
+            modalElement.classList.remove('show');
+            modalElement.removeEventListener('click', closeIfOverlay);
+            // Clear validation messages if any
+            modalElement.querySelectorAll('.form-group.invalid').forEach(el => el.classList.remove('invalid'));
+        }
+
+        function closeIfOverlay(event) {
+            if (event.target === this) { // 'this' refers to the modal-overlay
+                closeModal(this);
+            }
+        }
+
+        /**
+         * Populates and shows the transaction detail modal.
+         * @param {Object} transaction - The transaction object to display.
+         */
+        function showTransactionDetails(transaction) {
+            document.getElementById('modal-transaction-title').textContent = `Transaction: ${transaction.name}`;
+            document.getElementById('modal-description').textContent = transaction.name;
+            document.getElementById('modal-amount').textContent = `${transaction.type === 'expense' ? '-' : ''}${formatCurrency(transaction.amount)}`;
+            document.getElementById('modal-type').textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1);
+            document.getElementById('modal-type').className = `transaction-type ${transaction.type}`; // Apply color class
+            document.getElementById('modal-category').textContent = transaction.category;
+            document.getElementById('modal-payment-method').textContent = transaction.paymentMethod;
+            document.getElementById('modal-date').textContent = new Date(transaction.date + 'T00:00:00').toLocaleDateString();
+            document.getElementById('modal-tags').textContent = transaction.tags || 'N/A';
+            openModal(transactionDetailModal);
+        }
+
+        /**
+         * Populates and shows the edit transaction modal.
+         * @param {Object} transaction - The transaction object to edit.
+         */
+        function openEditTransactionModal(transaction) {
+            document.getElementById('edit-transaction-id').value = transaction.id;
+            document.getElementById('edit-transaction-name').value = transaction.name;
+            document.getElementById('edit-transaction-amount').value = transaction.amount;
+            document.getElementById('edit-transaction-date').value = transaction.date; // Date input expectsYYYY-MM-DD
+            document.getElementById('edit-transaction-category').value = transaction.category;
+            document.getElementById('edit-transaction-payment-method').value = transaction.paymentMethod;
+            document.getElementById('edit-transaction-tags').value = transaction.tags;
+
+            // Set active type button
+            document.querySelectorAll('#edit-transaction-type-buttons .type-btn').forEach(btn => {
+                btn.classList.remove('active', 'income', 'expense'); // Clear previous states
+                btn.setAttribute('aria-pressed', 'false');
+                if (btn.dataset.type === transaction.type) {
+                    btn.classList.add('active', transaction.type);
+                    btn.setAttribute('aria-pressed', 'true');
+                }
+            });
+
+            // Set active type for the edit form's own JS logic
+            editTransactionForm.dataset.activeType = transaction.type;
+
+            openModal(editTransactionModal);
+        }
+
+        // --- Navigation Logic ---
+        function showSection(sectionId) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.section === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Close mobile menu if open
+            if (navbarNav.classList.contains('active')) {
+                navbarNav.classList.remove('active');
+            }
+
+            // Scroll to top of the new section (optional)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // --- Global UI Refresh ---
+        function refreshAllUI() {
+            updateOverview();
+            renderTransactionsTable();
+            renderBudgetOverview();
+            saveToLocalStorage(); // Save state after every major UI change
+        }
+
+        // --- Event Listeners ---
+
+        // Navbar Toggler for mobile
+        navbarToggler.addEventListener('click', () => {
+            navbarNav.classList.toggle('active');
+        });
+
+        // Navbar navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default anchor jump
+                const sectionId = link.dataset.section;
+                showSection(sectionId);
+            });
+        });
+
+
+        // Add Transaction Form Submission
+        transactionForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent page reload
+
+            if (!validateForm(transactionForm)) {
+                showToast('Please correct the errors in the form.', 'error');
+                return;
+            }
+
+            const name = transactionNameInput.value.trim();
+            const amount = parseFloat(transactionAmountInput.value);
+            const date = transactionDateInput.value;
+            const category = transactionCategorySelect.value;
+            const paymentMethod = transactionPaymentMethodSelect.value;
+            const tags = transactionTagsInput.value.trim();
+
+            const newTransaction = {
+                id: Date.now(), // Simple unique ID
+                name,
+                amount,
+                type: activeTransactionType,
+                category,
+                paymentMethod,
+                date, // YYYY-MM-DD
+                tags
+            };
+            transactions.unshift(newTransaction); // Add to the beginning of the array
+            refreshAllUI();
+            showToast('Transaction added successfully!', 'success');
+
+            // Clear form and reset type to income
+            transactionForm.reset();
+            document.querySelector('.transaction-type-buttons .type-btn.active').classList.remove('active');
+            document.querySelector('.transaction-type-buttons .type-btn.income').classList.add('active');
+            activeTransactionType = 'income';
+
+            // Clear any lingering validation errors
+            transactionForm.querySelectorAll('.form-group.invalid').forEach(el => el.classList.remove('invalid'));
+
+            // After adding, navigate to transaction history
+            showSection('transaction-history');
+        });
+
+        // Transaction type selection buttons (Add form)
+        transactionTypeButtons.addEventListener('click', (event) => {
+            const clickedBtn = event.target.closest('.type-btn');
+            if (clickedBtn) {
+                document.querySelectorAll('.transaction-type-buttons .type-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                clickedBtn.classList.add('active', clickedBtn.dataset.type);
+                clickedBtn.setAttribute('aria-pressed', 'true');
+                activeTransactionType = clickedBtn.dataset.type;
+            }
+        });
+
+        // Event delegation for actions on transaction table (View, Edit, Delete)
+        transactionsTableBody.addEventListener('click', (event) => {
+            const row = event.target.closest('tr');
+            if (!row) return;
+
+            const transactionId = parseInt(row.dataset.id);
+            const transaction = transactions.find(t => t.id === transactionId);
+
+            if (!transaction) return;
+
+            if (event.target.closest('.view-btn')) {
+                showTransactionDetails(transaction);
+            } else if (event.target.closest('.edit-btn')) {
+                openEditTransactionModal(transaction);
+            } else if (event.target.closest('.delete-btn')) {
+                if (confirm(`Are you sure you want to delete the transaction: "${transaction.name}"?`)) {
+                    transactions = transactions.filter(t => t.id !== transactionId);
+                    refreshAllUI();
+                    showToast('Transaction deleted!', 'info');
+                }
+            }
+        });
+
+        // Edit Transaction Form Submission
+        editTransactionForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            if (!validateForm(editTransactionForm)) {
+                showToast('Please correct the errors in the form.', 'error');
+                return;
+            }
+
+            const idToUpdate = parseInt(document.getElementById('edit-transaction-id').value);
+            const updatedName = document.getElementById('edit-transaction-name').value.trim();
+            const updatedAmount = parseFloat(document.getElementById('edit-transaction-amount').value);
+            const updatedDate = document.getElementById('edit-transaction-date').value;
+            const updatedCategory = document.getElementById('edit-transaction-category').value;
+            const updatedPaymentMethod = document.getElementById('edit-transaction-payment-method').value;
+            const updatedTags = document.getElementById('edit-transaction-tags').value.trim();
+            const updatedType = editTransactionForm.dataset.activeType; // Get type from dataset
+
+            const transactionIndex = transactions.findIndex(t => t.id === idToUpdate);
+            if (transactionIndex > -1) {
+                transactions[transactionIndex] = {
+                    id: idToUpdate,
+                    name: updatedName,
+                    amount: updatedAmount,
+                    type: updatedType,
+                    category: updatedCategory,
+                    paymentMethod: updatedPaymentMethod,
+                    date: updatedDate,
+                    tags: updatedTags
+                };
+                refreshAllUI();
+                closeModal(editTransactionModal);
+                showToast('Transaction updated successfully!', 'success');
+            } else {
+                showToast('Error: Transaction not found.', 'error');
+            }
+        });
+
+        // Transaction type selection buttons (Edit form)
+        document.getElementById('edit-transaction-type-buttons').addEventListener('click', (event) => {
+            const clickedBtn = event.target.closest('.type-btn');
+            if (clickedBtn) {
+                document.querySelectorAll('#edit-transaction-type-buttons .type-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                clickedBtn.classList.add('active', clickedBtn.dataset.type);
+                clickedBtn.setAttribute('aria-pressed', 'true');
+                editTransactionForm.dataset.activeType = clickedBtn.dataset.type; // Update dataset
+            }
+        });
+
+
+        // Close modals via dedicated close buttons
+        modalCloseButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                closeModal(e.target.closest('.modal-overlay'));
+            });
+        });
+
+        // Cancel edit button
+        cancelEditBtn.addEventListener('click', () => {
+            closeModal(editTransactionModal);
+        });
+
+        // Filters and Search (re-render table on change)
+        filterTypeSelect.addEventListener('change', renderTransactionsTable);
+        filterCategorySelect.addEventListener('change', renderTransactionsTable);
+        filterStartDateInput.addEventListener('change', renderTransactionsTable);
+        filterEndDateInput.addEventListener('change', renderTransactionsTable);
+        liveSearchInput.addEventListener('input', renderTransactionsTable); // Live search
+
+        // Table Header Sorting
+        transactionsTableHead.addEventListener('click', (event) => {
+            const th = event.target.closest('th');
+            if (th && th.dataset.sort) {
+                const sortColumn = th.dataset.sort;
+                if (currentSortColumn === sortColumn) {
+                    currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    // Reset sort icons for other columns
+                    transactionsTableHead.querySelectorAll('th').forEach(otherTh => {
+                        if (otherTh !== th) {
+                             otherTh.classList.remove('sort-asc', 'sort-desc');
+                             const icon = otherTh.querySelector('i');
+                             if (icon) icon.className = 'fas fa-sort'; // Reset icon to default
+                        }
+                    });
+                    currentSortColumn = sortColumn;
+                    currentSortOrder = 'asc'; // Default to ascending for new column
+                }
+
+                // Update UI for sort icon
+                th.classList.remove('sort-asc', 'sort-desc'); // Remove existing
+                th.classList.add(`sort-${currentSortOrder}`);
+                const icon = th.querySelector('i');
+                if (icon) icon.className = `fas fa-sort-${currentSortOrder === 'asc' ? 'up' : 'down'}`;
+
+                renderTransactionsTable();
+            }
+        });
+
+        // Export to CSV
+        exportCsvBtn.addEventListener('click', () => {
+            if (transactions.length === 0) {
+                showToast('No transactions to export.', 'info');
+                return;
+            }
+
+            const headers = ["ID", "Description", "Amount", "Type", "Category", "Payment Method", "Date", "Tags"];
+            const csvRows = [];
+            csvRows.push(headers.join(','));
+
+            transactions.forEach(t => {
+                const row = [
+                    t.id,
+                    `"${t.name.replace(/"/g, '""')}"`, // Handle commas and quotes in description
+                    t.amount,
+                    t.type,
+                    `"${t.category.replace(/"/g, '""')}"`,
+                    `"${t.paymentMethod.replace(/"/g, '""')}"`,
+                    t.date,
+                    `"${t.tags.replace(/"/g, '""')}"`
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) { // Feature detection for download attribute
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'finance_transactions.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast('Transactions exported to CSV!', 'success');
+            } else {
+                showToast('Your browser does not support CSV export.', 'error');
+            }
+        });
+
+        // Budget Form Submission
+        budgetForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const category = budgetCategorySelect.value;
+            const amount = parseFloat(budgetAmountInput.value);
+
+            if (category && amount >= 0) {
+                budgets[category] = amount;
+                refreshAllUI();
+                showToast(`Budget for ${category} set to ${formatCurrency(amount)}.`, 'success');
+                budgetForm.reset();
+            } else {
+                showToast('Please select a category and enter a valid budget amount.', 'error');
+            }
+        });
+
+        // Event delegation for Budget Item actions (Edit/Delete Budget)
+        budgetChartContainer.addEventListener('click', (event) => {
+            if (event.target.closest('.edit-budget-btn')) {
+                const category = event.target.closest('.edit-budget-btn').dataset.category;
+                budgetCategorySelect.value = category;
+                budgetAmountInput.value = budgets[category] || 0;
+                // Scroll to budget form
+                budgetForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                showToast(`Editing budget for ${category}.`, 'info');
+            } else if (event.target.closest('.delete-budget-btn')) {
+                const category = event.target.closest('.delete-budget-btn').dataset.category;
+                if (confirm(`Are you sure you want to delete the budget for "${category}"?`)) {
+                    delete budgets[category];
+                    refreshAllUI();
+                    showToast(`Budget for ${category} deleted!`, 'info');
+                }
+            }
+        });
+
+        // Dark Mode Toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark-mode');
+            const isDarkMode = document.documentElement.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            updateDarkModeToggleButton();
+        });
+
+        // Updates the dark mode button text and icon based on current theme
+        function updateDarkModeToggleButton() {
+            const isDarkMode = document.documentElement.classList.contains('dark-mode');
+            darkModeToggle.innerHTML = `
+                <i class="fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}"></i>
+                ${isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            `;
+            darkModeToggle.setAttribute('aria-label', isDarkMode ? 'Switch to light mode' : 'Switch to dark mode');
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default date for Add Transaction form to today
+            transactionDateInput.value = new Date().toISOString().split('T')[0];
+
+            // Load saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+            updateDarkModeToggleButton(); // Set initial button state
+
+            // Populate all select options
+            populateSelectOptions();
+
+            // Load transactions and budgets from local storage
+            loadFromLocalStorage();
+
+            // Render initial UI based on loaded data
+            refreshAllUI();
+
+            // Set initial section based on hash or default to overview
+            const initialSection = window.location.hash.substring(1) || 'overview';
+            showSection(initialSection);
+        });
+    </script>
+</body>
+</html>
